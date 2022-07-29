@@ -25,11 +25,16 @@
                 <button @click="addPerson(item,$event)">添加责任人</button>
             </div>
         </div>
-        <div v-show="editPopVisible" class="person-dialog">
-            <p>责任人:<input type="text"  placeholder="请输入" v-model="temperPerson.user"></p>
-            <p>执行部门：<input type="text"  placeholder="请输入" v-model="temperPerson.department"></p>
-            <p>预计完成时间<input type="text"  placeholder="请选择" v-model="temperPerson.endTime"></p>
-            <p @click="editPopVisible=false;savePerson()">确定</p>
+        <div class="pop" v-show="editPopVisible">
+            <div class="person-dialog">
+                <p>责任人:<input type="text"  placeholder="请输入" v-model="temperPerson.user"></p>
+                <p>执行部门：<input type="text"  placeholder="请输入" v-model="temperPerson.department"></p>
+                <p>预计完成时间<input type="text"  placeholder="请选择" v-model="temperPerson.endTime"></p>
+                <p class="btns">
+                    <button  @click="editPopVisible=false;savePerson()">确定</button>
+                    <button  @click="editPopVisible=false">取消</button>
+                </p>
+            </div>
         </div>
     </div>
 </template>
@@ -90,31 +95,42 @@ let savePerson = function(){
 }
 
 watch(editPopVisible,(val)=>{
-    if(val){
-        document.body.classList.add('full-bg')
-    }
-    else{
-        document.body.classList.remove('full-bg')
-    }
+    // if(val){
+    //     document.body.classList.add('full-bg')
+    // }
+    // else{
+    //     document.body.classList.remove('full-bg')
+    // }
 })
 </script>
-<style>
+<style lang="stylus" scoped>
 html,body{
-    position:relative;
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
 }
-.full-bg{
+.pop{
+    position:fixed;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
     background-color:rgba(0,0,0,0.5);
+    z-index:999;
 }
 .person-dialog{
     position:absolute;
     top:50%;
     left:50%;
     transform: translate(-50%,-50%);
-    width:200px;
+    width:300px;
     height:200px;
-    border:1px solid;
+    border-radius:5px;
     background-color:#fff;
-    padding:5px;
-    box-sizing: border-box;
+    padding:10px;
+    .btns{
+        text-align:center;
+    }
 }
 </style>

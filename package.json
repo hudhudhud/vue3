@@ -10,7 +10,6 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "element-plus": "^1.0.2-beta.45",
-    "sass": "^1.53.0",
     "vue": "^3.2.0",
     "vue-router": "^4.0.8",
     "vuex": "^4.0.1"
@@ -22,7 +21,9 @@
     "@vue/compiler-sfc": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0"
+    "eslint-plugin-vue": "^7.0.0",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2"
   },
   "eslintConfig": {
     "root": true,
