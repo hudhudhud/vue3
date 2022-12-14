@@ -3,9 +3,11 @@ import App from './App.vue'
 import App2 from './App2.vue'
 import store from './store/index'
 import router from './router/index'
-// import ElementPlus from 'element-plus';
+import ElementPlus from 'element-plus';
 import 'element-plus/lib/theme-chalk/index.css';
 
+const app = createApp(App)
+app.use(ElementPlus)
 
 // let app = createApp(App)
 // app.directive('focus', {
@@ -34,6 +36,7 @@ router.beforeEach((to, from, next) => {
 let app2 = createApp(App2)
 app2.use(store)
 app2.use(router)
+app2.use(ElementPlus)
 app2.mount('#app2')
 
 

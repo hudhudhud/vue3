@@ -1,0 +1,243 @@
+<!-- 参考地址 https://segmentfault.com/a/1190000012568782 -->
+<!DOCTYPE html>
+<header>
+    <meta charset="utf-8">
+    <style>
+    html,body,#app{
+        margin:0;
+        padding:0;
+        width:100%;
+        height:100%
+    }
+    table{
+        border:1px solid #D0D0D0;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+    table th{
+        height:20px;
+        line-height: 20px;
+        font-weight:bold;
+        text-align: center;
+        font-weight: bold;
+        border-right: 1px solid #000;
+        border-bottom:1px solid #000;
+        box-sizing: border-box;
+    }
+    table thead{
+        background-color:#4BACC6;
+    }
+    table th,table td{
+        padding:5px;
+        text-align:center;
+        box-sizing: border-box;
+    }
+    table tr{
+        box-sizing: border-box;
+    }
+    table td{
+        border-right: 1px solid #000;
+        border-bottom:1px solid #000;
+        word-break: break-all;
+    }
+    table td input,table td textarea{
+        width:90%;
+    }
+    /* 表头高度 */
+    .table-header-height{
+        height:100px;
+    }
+    /* 表格宽度 */
+    .table-width{
+        width:1500px;
+    }
+     /* 滚动区为整个页面高度减去表头高度*/
+    .scroll-content-height{
+         height:calc(100% - 100px);
+    }
+    .column-hidden{
+        visibility: hidden;
+    }
+    /* 固定列宽度 */
+    .fix-column-width{
+        width:180px;
+    }
+    .table-fixed-left-scroll {
+        box-shadow: 6px 0 6px -4px rgba(0,0,0,.2);
+    }
+    </style>
+</header>
+<body>
+    <section id="app">
+        <div style="position:relative;overflow: hidden;width:100%;height:100%">
+             <!-- 表头固定，整个横向滚动 -->
+             <div style="overflow-x:auto;overflow-y:hidden;position:relative;height:100%;" id="hori-scroll-content">
+                <table class="table-width table-header-height">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="width:100px;">项目编号</th>
+                            <th rowspan="2" class="fix-column-width">经费名称</th>
+                            <th :colspan="columnHeader['budgetSum'].list.length+1">预算目标（万元）</th>
+                            <th :colspan="columnHeader['putSum'].list.length+1">实际投入（万元）</th>
+                            <th rowspan="2" style="width:80px">执行率%</th>
+                            <th rowspan="2" style="width:80px">经费缺口</th>
+                            <th rowspan="2" style="width:150px">备注</th>
+                        </tr>
+                        <tr>
+                            <th style="width:80px">预算合计</th>
+                            <th v-for="yearItem of columnHeader['budgetSum'].list">{{yearItem.year}}</th>
+                            <th  style="width:80px">投入合计</th>
+                            <th v-for="yearItem of columnHeader['putSum'].list">{{yearItem.year}}</th>
+                        </tr>
+                    </thead>
+                </table>
+                <!-- 内容滚动区，设置宽度、高度，横向不可滚动（横向靠外部滚动），纵向滚动 -->
+                <div style="overflow-y:auto;overflow-x:hidden" class="table-width scroll-content-height"  id="vert-scroll-content">
+                    <table  class="table-width" style="overflow-x:hidden;">
+                        <tbody >
+                            <tr v-for="(item,index) of dataList">
+                                <td style="width:100px">{{item.no}}</td>
+                                <td class="fix-column-width">{{item.name}}</td>
+                                <td>
+                                    <span>{{item.budgetSum}}</span>
+                                </td>
+                                <td v-for="yearItem of columnHeader['budgetSum'].list">
+                                    <span>{{item.budgetSumObj[yearItem.year]}}</span>
+                                </td>
+                                <td>
+                                    <span>{{(item.putSum-'').toFixed(2)}}</span>
+                                </td>
+                                <td v-for="yearItem of columnHeader['putSum'].list">
+                                    <span>{{(item.putSumObj[yearItem.year]-'').toFixed(2)}}</span>
+                                </td>
+                                <td style="width:80px">2%</td>
+                                <td style="width:80px">3</td>
+                                <td style="width:150px">
+                                    <textarea name="" id="" rows="1" v-model="item.remark"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 列固定，整个纵向滚动，高度为减去横向滚动条的高度 -->
+            <div style="position:absolute;top:0;left:0px;overflow-x: hidden; background:#fff;width:280px;height:calc(100% - 17px); " id="fix-column-container">
+                <!-- 表头 -->
+                <table class="table-width table-header-height">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="width:100px">项目编号</th>
+                            <th rowspan="2" class="fix-column-width" style="background-color:pink">经费名称</th>
+                            <th class="column-hidden" :colspan="columnHeader['budgetSum'].list.length+1">预算目标（万元）</th>
+                            <th class="column-hidden" :colspan="columnHeader['putSum'].list.length+1">实际投入（万元）</th>
+                            <th class="column-hidden" rowspan="2" style="width:80px">执行率%</th>
+                            <th class="column-hidden" rowspan="2" style="width:80px">经费缺口</th>
+                            <th class="column-hidden" rowspan="2" style="width:150px">备注</th>
+                        </tr>
+                    </thead>
+                </table>
+                <div style="overflow:hidden;"  class="scroll-content-height"  id="fix-column-content">
+                    <table class="table-width">
+                        <tbody >
+                            <tr v-for="(item,index) of dataList">
+                                <td style="width:100px">{{item.no}}</td>
+                                <td class="fix-column-width">{{item.name}}</td>
+                                <td>
+                                    <span>{{item.budgetSum}}</span>
+                                </td>
+                                <td v-for="yearItem of columnHeader['budgetSum'].list">
+                                    <span>{{item.budgetSumObj[yearItem.year]}}</span>
+                                </td>
+                                <td>
+                                    <span>{{(item.putSum-'').toFixed(2)}}</span>
+                                </td>
+                                <td v-for="yearItem of columnHeader['putSum'].list">
+                                    <span>{{(item.putSumObj[yearItem.year]-'').toFixed(2)}}</span>
+                                </td>
+                                <td style="width:80px">2%</td>
+                                <td style="width:80px">3</td>
+                                <td style="width:150px">
+                                    <textarea name="" id="" rows="1" v-model="item.remark"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+           
+        </div>
+    </section>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.13/dist/vue.js"></script>
+<script>
+//参考 https://segmentfault.com/a/1190000012568782
+var columnHeader = {
+               "budgetSum":{
+                    list:[
+                        {year:2021},
+                        {year:2022},
+                        {year:2023},
+                        {year:2024},
+                    ],  
+               },              
+               "putSum":{
+                    list:[
+                        {year:2021},
+                        {year:2022},
+                        {year:2023},
+                    ], 
+               }
+           }
+var dataList = []
+var vueEl = new Vue({
+    el: '#app',
+    data(){
+        return {
+           columnHeader,
+           dataList,
+        }
+    },
+    created(){
+        while(this.dataList.length<50){
+            this.dataList.push({
+                no:this.dataList.length+1,
+                name:this.dataList.length+1+'_name',
+                budgetSum:this.dataList.length+1+"_sum",
+                budgetSumObj:{
+                    2021:1,
+                    2022:"",
+                    2023:"",
+                    2024:""
+                },
+                putSum:6,
+                putSumObj:{
+                    2021:1,
+                    2022:2,
+                    2023:3,
+                },
+                remark:`包括：ROW（10.6亿）\n123\n456`
+            })
+        }
+    },
+    mounted(){
+        //固定列同步滚动
+        document.getElementById('vert-scroll-content').addEventListener('scroll',function(){
+            document.getElementById('fix-column-content').scrollTop = this.scrollTop
+        })
+
+        //横向滚动时固定列加阴影
+        document.getElementById('hori-scroll-content').addEventListener('scroll',function(){
+           if(this.scrollLeft>0){
+            document.getElementById('fix-column-container').classList.add('table-fixed-left-scroll')
+           }
+           else{
+            document.getElementById('fix-column-container').classList.remove('table-fixed-left-scroll')
+           }
+        })
+    },
+    methods:{
+
+    }
+})
+</script>
